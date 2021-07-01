@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"runtime"
 )
 
 func main() {
@@ -14,8 +15,13 @@ func main() {
 	b, _ := json.Marshal(a[:10])
 	//b, _ := json.Marshal(a[:100])
 
-	//cmd0 := exec.Command("echo", "-n", "My first command comes from golang.")
-	cmd0 := exec.Command("echo", "-n", string(b))
+	var cmd0 *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd0 = exec.Command("cmd", "/c", "echo", string(b))
+	} else {
+		//cmd0 := exec.Command("echo", "-n", "My first command comes from golang.")
+		cmd0 = exec.Command("echo", "-n", string(b))
+	}
 
 	// 开启管道
 	stdout, err := cmd0.StdoutPipe()
